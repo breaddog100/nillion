@@ -43,7 +43,6 @@ update_script() {
 # 部署节点
 function install_node(){
     read -p "节点名称: " NODE_NAME
-    read -p "区块高度: " BLOCK_NUM
 
 # 安装Docker
 	if ! command -v docker &> /dev/null; then
@@ -69,9 +68,10 @@ function install_node(){
 	    echo "Docker已安装。"
 	fi
 	
+    # 初始化
 	docker pull nillion/retailtoken-accuser:v1.0.0
     mkdir -p $HOME/nillion/accuser
-    docker run --name $NODE_NAME -v $HOME/nillion/accuser:/var/tmp -d nillion/retailtoken-accuser:v1.0.0 accuse --rpc-endpoint "https://testnet-nillion-rpc.lavenderfive.com" --block-start $BLOCK_NUM
+    docker run -v ./nillion/accuser:/var/tmp nillion/retailtoken-accuser:v1.0.0 initialise
 
     # 输出信息
     cat $HOME/nillion/accuser/credentials.json
