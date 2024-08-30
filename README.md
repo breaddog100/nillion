@@ -1,0 +1,1 @@
+wget -O nillion.sh https://raw.githubusercontent.com/breaddog100/nillion/main/nillion.sh && chmod +x nillion.sh && ./nillion.sh
