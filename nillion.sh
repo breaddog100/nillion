@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 设置版本号
-current_version=20240830002
+current_version=20240830003
 
 update_script() {
     # 指定URL
@@ -61,10 +61,12 @@ function install_node(){
 	    sudo apt-get install -y docker-ce
         sudo groupadd docker
 	    sudo usermod -aG docker $USER
+        newgrp docker
 	    echo "Docker安装完成。"
 	else
         sudo groupadd docker
         sudo usermod -aG docker $USER
+        newgrp docker
 	    echo "Docker已安装。"
 	fi
 	
