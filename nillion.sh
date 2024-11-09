@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 设置版本号
-current_version=20241109002
+current_version=20241109004
 
 update_script() {
     # 指定URL
@@ -83,20 +83,20 @@ function install_node(){
 function start_node(){
     read -p "节点名称: " NODE_NAME
     read -p "区块高度: " BLOCK_NUM
-    RPC="https://nillion-testnet-rpc.polkachu.com"
-    sudo docker run --name $NODE_NAME -v $HOME/nillion/verifier:/var/tmp -d nillion/verifier:v1.0.1 accuse --rpc-endpoint $RPC --block-start $BLOCK_NUM
+    RPC="https://testnet-nillion-rpc.lavenderfive.com"
+    docker run --name $NODE_NAME -v $HOME/nillion/verifier:/var/tmp -d nillion/verifier:v1.0.1 accuse --rpc-endpoint $RPC --block-start $BLOCK_NUM
 }
 
 # 停止节点
 function stop_node(){
     read -p "节点名称: " NODE_NAME
-    sudo docker stop $NODE_NAME
+    docker stop $NODE_NAME
 }
 
 # 节点日志
 function logs_node(){
     read -p "节点名称: " NODE_NAME
-    sudo docker logs $NODE_NAME
+    docker logs $NODE_NAME
 }
 
 # 查看块高度
