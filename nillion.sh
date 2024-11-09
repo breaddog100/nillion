@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 设置版本号
-current_version=20240830003
+current_version=20241109001
 
 update_script() {
     # 指定URL
@@ -44,7 +44,7 @@ update_script() {
 function install_node(){
     read -p "节点名称: " NODE_NAME
 
-# 安装Docker
+    # 安装Docker
 	if ! command -v docker &> /dev/null; then
 	    echo "Docker未安装，正在安装..."
 	    # 更新包列表
@@ -61,19 +61,17 @@ function install_node(){
 	    sudo apt-get install -y docker-ce
         sudo groupadd docker
 	    sudo usermod -aG docker $USER
-        newgrp docker
 	    echo "Docker安装完成。"
 	else
         sudo groupadd docker
         sudo usermod -aG docker $USER
-        newgrp docker
 	    echo "Docker已安装。"
 	fi
 	
     # 初始化
-	docker pull nillion/retailtoken-accuser:v1.0.0
+    docker pull nillion/verifier:v1.0.1
     mkdir -p $HOME/nillion/accuser
-    docker run -v ./nillion/accuser:/var/tmp nillion/retailtoken-accuser:v1.0.0 initialise
+    docker run -v ./nillion/accuser:/var/tmp nillion/verifier:v1.0.1 initialise
 
     # 输出信息
     cat $HOME/nillion/accuser/credentials.json
@@ -85,19 +83,20 @@ function install_node(){
 function start_node(){
     read -p "节点名称: " NODE_NAME
     read -p "区块高度: " BLOCK_NUM
-    docker run --name $NODE_NAME -v $HOME/nillion/accuser:/var/tmp -d nillion/retailtoken-accuser:v1.0.0 accuse --rpc-endpoint "https://testnet-nillion-rpc.lavenderfive.com" --block-start $BLOCK_NUM
+    RPC="https://nillion-testnet-rpc.polkachu.com"
+    sudo docker run --name $NODE_NAME -v $HOME/nillion/accuser:/var/tmp -d nillion/verifier:v1.0.1 accuse --rpc-endpoint $RPC --block-start $BLOCK_NUM
 }
 
 # 停止节点
 function stop_node(){
     read -p "节点名称: " NODE_NAME
-    docker stop $NODE_NAME
+    sudo docker stop $NODE_NAME
 }
 
 # 节点日志
 function logs_node(){
     read -p "节点名称: " NODE_NAME
-    docker logs $NODE_NAME
+    sudo docker logs $NODE_NAME
 }
 
 # 查看块高度
