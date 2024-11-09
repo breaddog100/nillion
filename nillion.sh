@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 设置版本号
-current_version=20241109004
+current_version=20241109005
 
 update_script() {
     # 指定URL
@@ -76,15 +76,14 @@ function install_node(){
     # 输出信息
     cat $HOME/nillion/verifier/credentials.json
     echo "请安装Keplr钱包并用上方秘钥恢复钱包，然后到https://faucet.testnet.nillion.com/领水"
-    echo "查看钱包，水到账后打开：https://verifier.nillion.com/verifier 进行注册，获取最后一步中的当前块高度"
+    echo "查看钱包，水到账后打开：https://verifier.nillion.com/verifier 进行注册"
 }
 
 # 启动节点
 function start_node(){
     read -p "节点名称: " NODE_NAME
-    read -p "区块高度: " BLOCK_NUM
     RPC="https://testnet-nillion-rpc.lavenderfive.com"
-    docker run --name $NODE_NAME -v $HOME/nillion/verifier:/var/tmp -d nillion/verifier:v1.0.1 accuse --rpc-endpoint $RPC --block-start $BLOCK_NUM
+    docker run --name $NODE_NAME -v $HOME/nillion/verifier:/var/tmp -d nillion/verifier:v1.0.1 accuse --rpc-endpoint $RPC
 }
 
 # 停止节点
