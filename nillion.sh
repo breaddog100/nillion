@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 设置版本号
-current_version=20241109005
+current_version=20241109006
 
 update_script() {
     # 指定URL
@@ -72,11 +72,13 @@ function install_node(){
     docker pull nillion/verifier:v1.0.1
     mkdir -p $HOME/nillion/verifier
     docker run -v ./nillion/verifier:/var/tmp nillion/verifier:v1.0.1 initialise
+    echo "请记录上面的Verifier account id和Verifier public key，用于注册"
 
     # 输出信息
     cat $HOME/nillion/verifier/credentials.json
+    echo ""
     echo "请安装Keplr钱包并用上方秘钥恢复钱包，然后到https://faucet.testnet.nillion.com/领水"
-    echo "查看钱包，水到账后打开：https://verifier.nillion.com/verifier 进行注册"
+    echo "查看钱包，水到账后打开：https://verifier.nillion.com/verifier 进行注册，然后启动节点"
 }
 
 # 启动节点
