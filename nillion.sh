@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 设置版本号
-current_version=20241109007
+current_version=20241110001
 
 update_script() {
     # 指定URL
@@ -105,6 +105,12 @@ function check_block(){
     curl -s https://testnet-nillion-rpc.lavenderfive.com/status |jq .result.sync_info
 }
 
+# 节点状态
+function status_node(){
+    read -p "节点名称: " NODE_NAME
+    docker ps $NODE_NAME
+}
+
 # 卸载节点
 function uninstall_node(){
     echo "你确定要卸载节点程序吗？这将会删除所有相关的数据。[Y/N]"
@@ -113,7 +119,10 @@ function uninstall_node(){
         [yY][eE][sS]|[yY]) 
             read -p "节点名称: " NODE_NAME
             echo "开始卸载节点程序..."
-            sudo docker rm -f $NODE_NAME
+            sudo docker stop $NODE_NAME
+            sudo docker rm $NODE_NAME
+            sudo docker rmi $NODE_NAME
+            sudo rm -rf $HOME/nillion
             echo "节点程序卸载完成。"
             ;;
         *)
@@ -135,7 +144,7 @@ function main_menu() {
         echo "3. 停止节点 stop_node"
 	    echo "4. 节点日志 logs_node"
         echo "5. 块高度 check_block"
-        echo "6. 节点日志 logs_node"
+        echo "6. 节点状态 status_node"
         echo "1618. 卸载节点 uninstall_node"
 	    echo "0. 退出脚本 exit"
 	    read -p "请输入选项: " OPTION
@@ -146,7 +155,7 @@ function main_menu() {
         3) stop_node ;;
 	    4) logs_node ;;
         5) check_block ;;
-        6) logs_node ;;
+        6) status_node ;;
         1618) uninstall_node ;;
 	    0) echo "退出脚本。"; exit 0 ;;
 	    *) echo "无效选项，请重新输入。"; sleep 3 ;;
