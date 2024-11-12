@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 设置版本号
-current_version=20241112004
+current_version=20241112005
 
 update_script() {
     # 指定URL
@@ -68,44 +68,36 @@ function install_node(){
 	    echo "Docker已安装。"
 	fi
 	
-    exec newgrp docker <<EOF
-        echo "使用Docker拉取并初始化镜像..."
-        docker pull nillion/verifier:v1.0.1
-        mkdir -p nillion/accuser
-        docker run -v ./nillion/accuser:/var/tmp nillion/verifier:v1.0.1 initialise
+    # 初始化
+    sudo docker pull nillion/verifier:v1.0.1
+    mkdir -p nillion/accuser
+    sudo docker run -v ./nillion/accuser:/var/tmp nillion/verifier:v1.0.1 initialise
+    echo "请记录上面的Verifier account id和Verifier public key，用于注册"
 
-        # 输出信息
-        echo "请记录上面的Verifier account id和Verifier public key，用于注册"
-        cat $HOME/nillion/accuser/credentials.json
-        echo ""
-        echo "请安装Keplr钱包并用上方秘钥恢复钱包，然后到https://faucet.testnet.nillion.com/领水"
-        echo "查看钱包，水到账后打开：https://verifier.nillion.com/verifier 进行注册，然后启动节点"
-EOF
+    # 输出信息
+    cat $HOME/nillion/accuser/credentials.json
+    echo ""
+    echo "请安装Keplr钱包并用上方秘钥恢复钱包，然后到https://faucet.testnet.nillion.com/领水"
+    echo "查看钱包，水到账后打开：https://verifier.nillion.com/verifier 进行注册，然后启动节点"
 }
 
 # 启动节点
 function start_node(){
     read -p "节点名称: " NODE_NAME
     RPC="https://testnet-nillion-rpc.lavenderfive.com"
-    exec newgrp docker <<EOF
-    docker run --name $NODE_NAME -d -v $HOME/nillion/accuser:/var/tmp nillion/verifier:v1.0.1 verify --rpc-endpoint $RPC
-EOF
+    sudo docker run --name $NODE_NAME -d -v $HOME/nillion/accuser:/var/tmp nillion/verifier:v1.0.1 verify --rpc-endpoint $RPC
 }
 
 # 停止节点
 function stop_node(){
     read -p "节点名称: " NODE_NAME
-    exec newgrp docker <<EOF
-    docker stop $NODE_NAME
-EOF
+    sudo docker stop $NODE_NAME
 }
 
 # 节点日志
 function logs_node(){
     read -p "节点名称: " NODE_NAME
-    exec newgrp docker <<EOF
-    docker logs -f $NODE_NAME
-EOF
+    sudo docker logs -f $NODE_NAME
 }
 
 # 查看块高度
@@ -116,9 +108,7 @@ function check_block(){
 # 节点状态
 function status_node(){
     read -p "节点名称: " NODE_NAME
-    exec newgrp docker <<EOF
-    docker ps $NODE_NAME
-EOF
+    sudo docker ps $NODE_NAME
 }
 
 # 卸载节点
