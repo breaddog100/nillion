@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 设置版本号
-current_version=20241112002
+current_version=20241112003
 
 update_script() {
     # 指定URL
@@ -99,7 +99,7 @@ function stop_node(){
 # 节点日志
 function logs_node(){
     read -p "节点名称: " NODE_NAME
-    docker logs $NODE_NAME
+    docker logs -f $NODE_NAME
 }
 
 # 查看块高度
