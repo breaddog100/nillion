@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 设置版本号
-current_version=20241112003
+current_version=20241112004
 
 update_script() {
     # 指定URL
@@ -68,38 +68,44 @@ function install_node(){
 	    echo "Docker已安装。"
 	fi
 	
-    # 初始化
-    docker pull nillion/verifier:v1.0.1
-    #mkdir -p $HOME/nillion/verifier
-    #docker run -v ./nillion/verifier:/var/tmp nillion/verifier:v1.0.1 initialise
-    mkdir -p nillion/accuser
-    docker run -v ./nillion/accuser:/var/tmp nillion/verifier:v1.0.1 initialise
-    echo "请记录上面的Verifier account id和Verifier public key，用于注册"
+    exec newgrp docker <<EOF
+        echo "使用Docker拉取并初始化镜像..."
+        docker pull nillion/verifier:v1.0.1
+        mkdir -p nillion/accuser
+        docker run -v ./nillion/accuser:/var/tmp nillion/verifier:v1.0.1 initialise
 
-    # 输出信息
-    cat $HOME/nillion/accuser/credentials.json
-    echo ""
-    echo "请安装Keplr钱包并用上方秘钥恢复钱包，然后到https://faucet.testnet.nillion.com/领水"
-    echo "查看钱包，水到账后打开：https://verifier.nillion.com/verifier 进行注册，然后启动节点"
+        # 输出信息
+        echo "请记录上面的Verifier account id和Verifier public key，用于注册"
+        cat $HOME/nillion/accuser/credentials.json
+        echo ""
+        echo "请安装Keplr钱包并用上方秘钥恢复钱包，然后到https://faucet.testnet.nillion.com/领水"
+        echo "查看钱包，水到账后打开：https://verifier.nillion.com/verifier 进行注册，然后启动节点"
+EOF
 }
 
 # 启动节点
 function start_node(){
     read -p "节点名称: " NODE_NAME
     RPC="https://testnet-nillion-rpc.lavenderfive.com"
+    exec newgrp docker <<EOF
     docker run --name $NODE_NAME -d -v $HOME/nillion/accuser:/var/tmp nillion/verifier:v1.0.1 verify --rpc-endpoint $RPC
+EOF
 }
 
 # 停止节点
 function stop_node(){
     read -p "节点名称: " NODE_NAME
+    exec newgrp docker <<EOF
     docker stop $NODE_NAME
+EOF
 }
 
 # 节点日志
 function logs_node(){
     read -p "节点名称: " NODE_NAME
+    exec newgrp docker <<EOF
     docker logs -f $NODE_NAME
+EOF
 }
 
 # 查看块高度
@@ -110,7 +116,9 @@ function check_block(){
 # 节点状态
 function status_node(){
     read -p "节点名称: " NODE_NAME
+    exec newgrp docker <<EOF
     docker ps $NODE_NAME
+EOF
 }
 
 # 卸载节点
