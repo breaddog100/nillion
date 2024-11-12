@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 设置版本号
-current_version=20241110001
+current_version=20241112001
 
 update_script() {
     # 指定URL
@@ -70,12 +70,14 @@ function install_node(){
 	
     # 初始化
     docker pull nillion/verifier:v1.0.1
-    mkdir -p $HOME/nillion/verifier
-    docker run -v ./nillion/verifier:/var/tmp nillion/verifier:v1.0.1 initialise
+    #mkdir -p $HOME/nillion/verifier
+    #docker run -v ./nillion/verifier:/var/tmp nillion/verifier:v1.0.1 initialise
+    mkdir -p nillion/accuser
+    docker run -v ./nillion/accuser:/var/tmp nillion/verifier:v1.0.1 initialise
     echo "请记录上面的Verifier account id和Verifier public key，用于注册"
 
     # 输出信息
-    cat $HOME/nillion/verifier/credentials.json
+    cat $HOME/nillion/accuser/credentials.json
     echo ""
     echo "请安装Keplr钱包并用上方秘钥恢复钱包，然后到https://faucet.testnet.nillion.com/领水"
     echo "查看钱包，水到账后打开：https://verifier.nillion.com/verifier 进行注册，然后启动节点"
@@ -85,7 +87,7 @@ function install_node(){
 function start_node(){
     read -p "节点名称: " NODE_NAME
     RPC="https://testnet-nillion-rpc.lavenderfive.com"
-    docker run --name $NODE_NAME -v $HOME/nillion/verifier:/var/tmp nillion/verifier:v1.0.1 verify --rpc-endpoint $RPC
+    docker run --name $NODE_NAME -v $HOME/nillion/accuser:/var/tmp nillion/verifier:v1.0.1 verify --rpc-endpoint $RPC
 }
 
 # 停止节点
@@ -121,7 +123,7 @@ function uninstall_node(){
             echo "开始卸载节点程序..."
             sudo docker stop $NODE_NAME
             sudo docker rm $NODE_NAME
-            sudo docker rmi $NODE_NAME
+            sudo docker rmi nillion/verifier:v1.0.1
             sudo rm -rf $HOME/nillion
             echo "节点程序卸载完成。"
             ;;
