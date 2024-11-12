@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 设置版本号
-current_version=20241112001
+current_version=20241112002
 
 update_script() {
     # 指定URL
@@ -87,7 +87,7 @@ function install_node(){
 function start_node(){
     read -p "节点名称: " NODE_NAME
     RPC="https://testnet-nillion-rpc.lavenderfive.com"
-    docker run --name $NODE_NAME -v $HOME/nillion/accuser:/var/tmp nillion/verifier:v1.0.1 verify --rpc-endpoint $RPC
+    docker run --name $NODE_NAME -d -v $HOME/nillion/accuser:/var/tmp nillion/verifier:v1.0.1 verify --rpc-endpoint $RPC
 }
 
 # 停止节点
