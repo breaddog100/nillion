@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 设置版本号
-current_version=20241112006
+current_version=20250109001
 
 update_script() {
     # 指定URL
@@ -109,7 +109,7 @@ function check_block(){
 # 节点状态
 function status_node(){
     read -p "节点名称: " NODE_NAME
-    sudo docker ps $NODE_NAME
+    sudo docker ps --filter "name=$NODE_NAME"
 }
 
 # 卸载节点
